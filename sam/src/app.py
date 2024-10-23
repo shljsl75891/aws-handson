@@ -1,8 +1,14 @@
-import boto3
 import json
 import os
 
+import boto3
+
 print('Loading function')
+
+region = os.environ['REGION']
+dynamo = boto3.client('dynamodb', region_name=region)
+table_name = os.environ['TABLE_NAME']
+
 
 def respond(err, res=None):
     return {
@@ -15,4 +21,5 @@ def respond(err, res=None):
 
 
 def lambda_handler(event, context):
-    return respond(None, "Hello From SAM")
+    scan_result = dynamo.scan(TableName=table_name)
+    return respond(None, res=scan_result)
